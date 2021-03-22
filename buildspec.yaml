@@ -1,0 +1,22 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      runtime: php:8.0
+    commands:
+      - apt install -y git zip
+      - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+  build:
+    commands:
+      - cd www && composer install
+  post_build:
+    commands:
+      - rm -rf docker docker-compose.yaml
+
+artifacts:
+  files:
+    - '**/*'
+  name: build_output
+  enable-symlinks: yes
+  base-directory: www

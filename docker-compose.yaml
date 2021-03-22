@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  web:
+    build:
+      context: docker/web
+    ports:
+      - 80:80
+    volumes:
+      - ./www:/var/www/html
+      - ./docker/web/000-default.conf:/etc/apache2/sites-available/000-default.conf
