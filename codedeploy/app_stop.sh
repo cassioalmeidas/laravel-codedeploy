@@ -1,3 +1,3 @@
 #!/bin/bash -xe
 
-sudo systemctl stop apache2
+systemctl stop apache2
