@@ -7,6 +7,9 @@ hooks:
   ApplicationStop:
     - location: codedeploy/app_stop.sh
       runas: root
+  BeforeInstall:
+    - location: codedeploy/update_apache.sh
+      runas: root
   ApplicationStart:
     - location: codedeploy/app_start.sh
       runas: root
