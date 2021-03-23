@@ -3,7 +3,7 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      runtime: php:8.0
+      runtime: php:8.x
     commands:
       - apt install -y git zip
       - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
