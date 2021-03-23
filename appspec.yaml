@@ -6,7 +6,9 @@ files:
 hooks:
   ApplicationStop:
     - location: codedeploy/app_stop.sh
+      runas: root
   ApplicationStart:
     - location: codedeploy/app_start.sh
+      runas: root
   ValidateService:
     - location: codedeploy/health_check.sh
