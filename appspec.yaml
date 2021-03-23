@@ -1,0 +1,12 @@
+version: 0.0
+os: linux
+files:
+  - source: www
+    destination: /var/www/html
+hooks:
+  ApplicationStop:
+    - location: codedeploy/app_stop.sh
+  ApplicationStart:
+    - location: codedeploy/app_start.sh
+  ValidateService:
+    - location: codedeploy/health_check.sh
