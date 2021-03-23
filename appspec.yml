@@ -3,12 +3,11 @@ os: linux
 files:
   - source: www
     destination: /var/www/html
+  - source: codedeploy/apache/000-default.conf
+    destination: /etc/apache2/sites-available/000-default.conf
 hooks:
   ApplicationStop:
     - location: codedeploy/app_stop.sh
-      runas: root
-  BeforeInstall:
-    - location: codedeploy/update_apache.sh
       runas: root
   ApplicationStart:
     - location: codedeploy/app_start.sh
