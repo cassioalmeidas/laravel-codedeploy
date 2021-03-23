@@ -12,6 +12,9 @@ hooks:
   BeforeInstall:
     - location: codedeploy/cleanup_apache_conf.sh
       runas: root
+  AfterInstall:
+    - location: codedeploy/after_install.sh
+      timeout: 180
   ApplicationStart:
     - location: codedeploy/app_start.sh
       runas: root
