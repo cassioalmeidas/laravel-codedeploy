@@ -1,3 +1,3 @@
 #!/bin/bash -xe
 
-systemctl start apache2
+sudo systemctl start apache2
