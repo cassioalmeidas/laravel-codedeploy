@@ -1,3 +1,3 @@
-#!/bin/bash -xe
+#!/bin/bash
 
 curl -sSf http://localhost > /dev/null

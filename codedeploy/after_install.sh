@@ -1,4 +1,4 @@
-#!/bin/bash -xe
+#!/bin/bash
 
 cd /var/www/html
 chmod -R 777 storage
