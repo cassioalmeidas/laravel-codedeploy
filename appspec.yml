@@ -3,7 +3,7 @@ os: linux
 files:
   - source: www
     destination: /var/www/html
-  - source: codedeploy/apache/*
+  - source: codedeploy/apache
     destination: /etc/apache2/sites-available
 hooks:
   ApplicationStop:
