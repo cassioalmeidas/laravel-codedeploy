@@ -5,6 +5,7 @@ files:
     destination: /var/www/html
   - source: codedeploy/apache
     destination: /etc/apache2/sites-available
+file_exists_behavior: OVERWRITE
 hooks:
   ApplicationStop:
     - location: codedeploy/app_stop.sh
