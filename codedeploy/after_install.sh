@@ -15,6 +15,3 @@ elif [ "${DEPLOYMENT_GROUP_NAME}" == "test-pipeline-codedeploy-group-prod" ]; th
   a2ensite dev
   rm prod.conf
 fi
-
-# Disable default apache config
-a2dissite 000-default
