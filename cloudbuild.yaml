@@ -2,7 +2,6 @@ steps:
   - id: Docker build
     name: 'gcr.io/cloud-builders/docker'
     args: [ 'build', '-t', 'asia.gcr.io/$PROJECT_ID/store:$BUILD_ID', '.' ]
-    dir: 'api'
   - id: Docker push
     name: 'gcr.io/cloud-builders/docker'
     args: [ 'push', 'asia.gcr.io/$PROJECT_ID/store:$BUILD_ID' ]
