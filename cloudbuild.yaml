@@ -6,6 +6,9 @@ steps:
   - id: Docker push
     name: 'gcr.io/cloud-builders/docker'
     args: [ 'push', 'asia.gcr.io/$PROJECT_ID/store:$BUILD_ID' ]
+  - id: Helm chart upgrade
+    name: 'asia.gcr.io/$PROJECT_ID/helm'
+    args: [ 'upgrade', 'store', 'gs://twopixeled-sandbox-helm/store-0.1.0.tgz', '--set', 'store.tag=${BUILD_ID}' ]
 
 images:
   - asia.gcr.io/$PROJECT_ID/wishlist-app:$BUILD_ID
