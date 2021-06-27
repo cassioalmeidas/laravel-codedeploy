@@ -19,5 +19,7 @@ COPY docker/web/000-default.conf /etc/apache2/sites-available/000-default.conf
 # Build source codes
 COPY www .
 RUN composer install
+RUN cp .env.example .env
+RUN php artisan key:generate
 
 EXPOSE 80
