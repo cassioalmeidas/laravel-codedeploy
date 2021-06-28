@@ -7,10 +7,16 @@ steps:
     args: [ 'push', 'asia.gcr.io/$PROJECT_ID/store:$BUILD_ID' ]
   - id: Helm chart upgrade
     name: 'asia.gcr.io/$PROJECT_ID/helm'
-    args: [ 'upgrade', 'store', 'https://storage.googleapis.com/twopixeled-sandbox-helm/store-0.1.0.tgz', '--set', 'store.tag=${BUILD_ID}' ]
+    args:
+      - upgrade
+      - store
+      - https://storage.googleapis.com/twopixeled-sandbox-helm/store-0.1.0.tgz
+      - --set
+      - store.tag=${BUILD_ID}
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
+      - 'TILLERLESS=true'
 
 images:
   - asia.gcr.io/$PROJECT_ID/wishlist-app:$BUILD_ID
