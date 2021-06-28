@@ -17,10 +17,10 @@ RUN a2enmod rewrite
 COPY docker/web/000-default.conf /etc/apache2/sites-available/000-default.conf
 
 # Build source codes
-RUN cp .env.example .env
-RUN php artisan key:generate
 COPY www .
 RUN composer install
+RUN cp .env.example .env
+RUN php artisan key:generate
 RUN chmod -R 777 storage
 
 EXPOSE 80
