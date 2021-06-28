@@ -9,14 +9,18 @@ steps:
     name: 'asia.gcr.io/$PROJECT_ID/helm'
     args:
       - upgrade
-      - store
-      - https://storage.googleapis.com/twopixeled-sandbox-helm/store-0.1.0.tgz
+      - --install
       - --set
       - store.tag=${BUILD_ID}
+      - store
+      - gs://twopixeled-sandbox-helm/store-0.1.0.tgz
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
       - 'TILLERLESS=true'
+      - 'TILLER_NAMESPACE=php-reviewer'
+      - 'GCS_PLUGIN_VERSION=0.3.12'
+      - 'HELM_REPO_URL=gs://twopixeled-sandbox-helm'
 
 images:
-  - asia.gcr.io/$PROJECT_ID/wishlist-app:$BUILD_ID
+  - asia.gcr.io/$PROJECT_ID/store:$BUILD_ID
