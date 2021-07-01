@@ -13,14 +13,14 @@ steps:
       - --set
       - store.tag=${BUILD_ID}
       - store
-      - gs://twopixeled-sandbox-helm/store-0.1.1.tgz
+      - gs://twopixeled-helm-charts-practice/store/store-0.1.1.tgz
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
       - 'TILLERLESS=true'
       - 'TILLER_NAMESPACE=php-reviewer'
       - 'GCS_PLUGIN_VERSION=0.3.12'
-      - 'HELM_REPO_URL=gs://twopixeled-sandbox-helm'
+      - 'HELM_REPO_URL=gs://twopixeled-helm-charts-practice/store'
 
 images:
   - asia.gcr.io/$PROJECT_ID/store:$BUILD_ID
