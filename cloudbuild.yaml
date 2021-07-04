@@ -13,7 +13,7 @@ steps:
       - --set
       - store.tag=${BUILD_ID}
       - store
-      - gs://twopixeled-helm-charts-practice/store/store-0.1.1.tgz
+      - gs://twopixeled-helm-charts-practice/store/store-0.1.2.tgz
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=${_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_GKE_CLUSTER}'
