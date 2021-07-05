@@ -13,14 +13,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::prefix('store')->name('store.')->group(function() {
+    Route::get('/', function () {
+        return view('welcome');
+    });
 
-Route::get('/phpinfo', function () {
-    return view('phpinfo');
-})->name('phpinfo');
+    Route::get('/phpinfo', function () {
+        return view('phpinfo');
+    })->name('phpinfo');
 
-Route::get('/sample-broken-page', function() {
-    return "this is broken, will test rollback";
+    Route::get('/sample-broken-page', function() {
+        return "this is broken, will test rollback";
+    });
 });
