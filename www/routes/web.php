@@ -19,7 +19,7 @@ Route::get('/', function () {
 
 Route::get('/phpinfo', function () {
     return view('phpinfo');
-});
+})->name('phpinfo');
 
 Route::get('/sample-broken-page', function() {
     return "this is broken, will test rollback";
