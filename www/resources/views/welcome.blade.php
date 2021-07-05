@@ -130,6 +130,6 @@
         </div>
 
         <br />
-        <a href="{{ route('phpinfo')  }}">PHP Info page</a>
+        <a href="{{ route('store.phpinfo')  }}">PHP Info page</a>
     </body>
 </html>
