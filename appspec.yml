@@ -19,5 +19,5 @@ hooks:
   ApplicationStart:
     - location: codedeploy/app_start.sh
       runas: root
-  ValidateService:
-    - location: codedeploy/health_check.sh
+  # ValidateService:
+  #   - location: codedeploy/health_check.sh
