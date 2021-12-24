@@ -17,6 +17,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Default Cloud Filesystem Disk
+    |--------------------------------------------------------------------------
+    |
+    | Many applications store files both locally and in the cloud. For this
+    | reason, you may specify a default "cloud" driver here. This driver
+    | will be bound as the Cloud disk implementation in the container.
+    |
+    */
+
+    'cloud' => env('FILESYSTEM_CLOUD', 's3'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Filesystem Disks
     |--------------------------------------------------------------------------
     |
@@ -48,8 +61,49 @@ return [
             'secret' => env('AWS_SECRET_ACCESS_KEY'),
             'region' => env('AWS_DEFAULT_REGION'),
             'bucket' => env('AWS_BUCKET'),
-            'url' => env('AWS_URL'),
-            'endpoint' => env('AWS_ENDPOINT'),
+            'endpoint' => env('AWS_URL'),
+        ],
+
+        'default' => [
+             'driver' => 'local',
+             'root' => public_path(),
+             'url' => env('APP_URL').'/public',
+             'visibility' => 'public',
+        ],
+
+        'dospace' => [
+          'driver' => 's3',
+          'key' => env('DOS_ACCESS_KEY_ID'),
+          'secret' => env('DOS_SECRET_ACCESS_KEY'),
+          'region' => env('DOS_DEFAULT_REGION'),
+          'bucket' => env('DOS_BUCKET'),
+          'endpoint' => 'https://'.env('DOS_DEFAULT_REGION').'.digitaloceanspaces.com',
+        ],
+
+        'wasabi' => [
+          'driver' => 's3',
+          'key' => env('WAS_ACCESS_KEY_ID'),
+          'secret' => env('WAS_SECRET_ACCESS_KEY'),
+          'region' => env('WAS_DEFAULT_REGION'),
+          'bucket' => env('WAS_BUCKET'),
+          'endpoint' => 'https://s3.'.env('WAS_DEFAULT_REGION').'.wasabisys.com'
+        ],
+
+        'backblaze' => [
+            'driver'         => 'b2',
+            'accountId'      => env('BACKBLAZE_ACCOUNT_ID'),
+            'applicationKey' => env('BACKBLAZE_APP_KEY'),
+            'bucketName'     => env('BACKBLAZE_BUCKET'),
+            'bucketId'       => env('BACKBLAZE_BUCKET_ID'), //optional
+        ],
+
+        'vultr' => [
+            'driver' => 's3',
+            'key'=> env('VULTR_ACCESS_KEY'),
+            'secret' => env('VULTR_SECRET_KEY'),
+            'region' => env('VULTR_REGION'),
+            'bucket' => env('VULTR_BUCKET'),
+            'endpoint' => env('VULTR_ENDPOINT'),
         ],
 
     ],

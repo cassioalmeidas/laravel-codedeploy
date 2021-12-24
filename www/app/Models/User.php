@@ -2,14 +2,22 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Auth;
+use Laravel\Cashier\Billable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Notifications\ResetPassword as ResetPasswordNotification;
+use Illuminate\Contracts\Translation\HasLocalePreference;
+use App\Models\Notifications;
+use Carbon\Carbon;
 
-class User extends Authenticatable
+class User extends Authenticatable implements HasLocalePreference
 {
-    use HasFactory, Notifiable;
+    use Notifiable, Billable;
+
+    const CREATED_AT = 'date';
+  	const UPDATED_AT = null;
 
     /**
      * The attributes that are mass assignable.
@@ -17,9 +25,24 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
+        'username',
+        'countries_id',
         'name',
         'email',
         'password',
+        'avatar',
+        'cover',
+        'status',
+        'role',
+        'permission',
+        'confirmation_code',
+        'oauth_uid',
+        'oauth_provider',
+        'token',
+        'story',
+        'verified_id',
+        'ip',
+        'language'
     ];
 
     /**
@@ -28,16 +51,197 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password',
-        'remember_token',
+        'password', 'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast to native types.
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPasswordNotification($token));
+    }
+
+    public function userSubscriptions()
+    {
+          return $this->hasMany('App\Models\Subscriptions');
+      }
+
+    public function mySubscriptions()
+    {
+          return $this->hasMany('App\Models\Subscriptions', 'stripe_plan', 'plan');
+      }
+
+    public function myPayments()
+    {
+          return $this->hasMany('App\Models\Transactions');
+      }
+
+    public function myPaymentsReceived()
+    {
+          return $this->hasMany('App\Models\Transactions', 'subscribed')->where('approved', '<>', '0');
+      }
+
+    public function updates()
+    {
+      return $this->hasMany('App\Models\Updates');
+    }
+
+    public function media()
+    {
+      return $this->belongsToMany('App\Models\Updates', 'media','user_id','updates_id')->where('media.status', 'active');
+    }
+
+      public function withdrawals()
+      {
+        return $this->hasMany('App\Models\Withdrawals');
+    }
+
+  	public function country()
+    {
+          return $this->belongsTo('App\Models\Countries', 'countries_id')->first();
+      }
+
+      public function notifications()
+      {
+            return $this->hasMany('App\Models\Notifications', 'destination');
+        }
+
+      public function messagesInbox()
+      {
+            return $this->hasMany('App\Models\Messages', 'to_user_id')->where('status','new')->count();
+        }
+
+      public function comments()
+      {
+            return $this->hasMany('App\Models\Comments');
+        }
+
+      public function likes()
+      {
+        return $this->hasMany('App\Models\Like');
+      }
+
+      public function category()
+      {
+        return $this->belongsTo('App\Models\Categories', 'categories_id');
+      }
+
+      public function verificationRequests()
+      {
+            return $this->hasMany('App\Models\VerificationRequests')->whereStatus('pending')->count();
+        }
+
+      public static function notificationsCount()
+      {
+        // Notifications Count
+      	$notifications_count = auth()->user()->notifications()->where('status', '0')->count();
+        // Messages
+      	$messages_count = auth()->user()->messagesInbox();
+
+        if( $messages_count != 0 &&  $notifications_count != 0 ) {
+          $totalNotifications = ( $messages_count + $notifications_count );
+        } else if( $messages_count == 0 &&  $notifications_count != 0  ) {
+          $totalNotifications = $notifications_count;
+        } else if ( $messages_count != 0 &&  $notifications_count == 0 ) {
+          $totalNotifications = $messages_count;
+        } else {
+          $totalNotifications = null;
+        }
+
+       return $totalNotifications;
+    }
+
+      function getFirstNameAttribute()
+      {
+        $name = explode(' ', $this->name);
+        return $name[0] ?? null;
+      }
+
+      function getLastNameAttribute()
+      {
+        $name = explode(' ', $this->name);
+        return $name[1] ?? null;
+      }
+
+      public function bookmarks()
+      {
+        return $this->belongsToMany('App\Models\Updates', 'bookmarks','user_id','updates_id');
+      }
+
+      public function likesCount()
+      {
+        return $this->hasManyThrough('App\Models\Like', 'App\Models\Updates', 'user_id', 'updates_id')->where('likes.status', '=', '1')->count();
+      }
+
+      public function checkSubscription($user)
+      {
+        return $this->userSubscriptions()
+            ->where('stripe_plan', $user->plan)
+            ->where('stripe_id', '=', '')
+            ->where('ends_at', '>=', now())
+
+              ->orWhere('stripe_status', 'active')
+                ->where('stripe_plan', $user->plan)
+              ->where('stripe_id', '<>', '')
+              ->whereUserId($this->id)
+
+              ->orWhere('stripe_id', '<>', '')
+                ->where('stripe_plan', $user->plan)
+                ->where('stripe_status', 'canceled')
+                ->where('ends_at', '>=', now())
+              ->whereUserId($this->id)
+
+                ->orWhere('stripe_plan', $user->plan)
+                ->where('stripe_id', '=', '')
+              ->whereFree('yes')
+              ->whereUserId($this->id)
+              ->first();
+            }
+
+        public function subscriptionsActive()
+        {
+          return $this->mySubscriptions()
+              ->where('stripe_id', '=', '')
+                ->where('ends_at', '>=', now())
+                ->orWhere('stripe_status', 'active')
+                  ->where('stripe_id', '<>', '')
+                    ->whereStripePlan($this->plan)
+                    ->orWhere('stripe_id', '=', '')
+                  ->where('stripe_plan', $this->plan)
+              ->where('free', '=', 'yes')
+            ->first();
+        }
+
+        public function totalSubscriptionsActive()
+        {
+          return $this->mySubscriptions()
+              ->where('stripe_id', '=', '')
+                ->where('ends_at', '>=', now())
+                ->orWhere('stripe_status', 'active')
+                  ->where('stripe_id', '<>', '')
+                    ->whereStripePlan($this->plan)
+                    ->orWhere('stripe_id', '=', '')
+                  ->where('stripe_plan', $this->plan)
+              ->where('free', '=', 'yes')
+            ->count();
+        }
+
+        public function payPerView()
+        {
+          return $this->belongsToMany('App\Models\Updates', 'pay_per_views','user_id','updates_id');
+        }
+
+
+        public function payPerViewMessages()
+        {
+          return $this->belongsToMany('App\Models\Messages', 'pay_per_views','user_id','messages_id');
+        }
+
+      /**
+     * Get the user's preferred locale.
      *
-     * @var array
+     * @return string
      */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    public function preferredLocale()
+    {
+        return $this->language;
+    }
 }

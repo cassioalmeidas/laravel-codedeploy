@@ -2,6 +2,12 @@
 
 namespace App\Providers;
 
+use App\Events\NewPostEvent;
+use App\Events\MassMessagesEvent;
+
+use App\Listeners\NewPostListener;
+use App\Listeners\MassMessagesListener;
+
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -18,6 +24,14 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+        NewPostEvent::class =>
+        [
+            NewPostListener::class,
+        ],
+        MassMessagesEvent::class =>
+        [
+            MassMessagesListener::class,
+        ]
     ];
 
     /**
@@ -27,6 +41,8 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        parent::boot();
+
         //
     }
 }
